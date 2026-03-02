@@ -1,416 +1,478 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>에이전트의 시대 — 웹툰</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>에이전트의 시대 — 웹툰</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700&display=swap');
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  body {
-    background: #0a0a0a;
-    color: #e0e0e0;
-    font-family: 'Noto Sans KR', sans-serif;
-    overflow-x: hidden;
-  }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: 'Noto Sans KR', sans-serif;
+      overflow-x: hidden;
+    }
 
-  /* Cover */
-  .cover-section {
-    position: relative;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .cover-section img {
-    width: 100%;
-    display: block;
-  }
-  .cover-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 50%;
-    background: linear-gradient(0deg, #0a0a0a 0%, transparent 100%);
-  }
+    /* Cover */
+    .cover-section {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-  /* Info */
-  .info-section {
-    max-width: 800px;
-    margin: -40px auto 0;
-    padding: 0 20px;
-    position: relative;
-    z-index: 10;
-    text-align: center;
-  }
-  .info-section .genre {
-    font-size: 11px;
-    letter-spacing: 6px;
-    color: #3a7bd5;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-  }
-  .info-section h1 {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 42px;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 8px;
-  }
-  .info-section .subtitle {
-    font-size: 14px;
-    color: #666;
-    letter-spacing: 4px;
-    margin-bottom: 24px;
-  }
-  .info-section .desc {
-    font-size: 15px;
-    line-height: 1.8;
-    color: #999;
-    max-width: 600px;
-    margin: 0 auto 40px;
-  }
+    .cover-section img {
+      width: 100%;
+      display: block;
+    }
 
-  /* Divider */
-  .divider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 0;
-    gap: 20px;
-  }
-  .divider .line { width: 60px; height: 1px; background: #333; }
-  .divider .dot { width: 4px; height: 4px; border-radius: 50%; background: #3a7bd5; }
+    .cover-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(0deg, #0a0a0a 0%, transparent 100%);
+    }
 
-  /* Characters */
-  .characters-section {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 0 20px 40px;
-    text-align: center;
-  }
-  .characters-section .label {
-    font-size: 11px;
-    letter-spacing: 6px;
-    color: #3a7bd5;
-    margin-bottom: 30px;
-  }
-  .char-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 16px;
-  }
-  .char-card {
-    text-align: center;
-  }
-  .char-card img {
-    width: 100%;
-    aspect-ratio: 3/4;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 1px solid #222;
-    transition: transform 0.3s ease, border-color 0.3s ease;
-  }
-  .char-card img:hover {
-    transform: scale(1.05);
-    border-color: #3a7bd5;
-  }
-  .char-card .name {
-    font-size: 13px;
-    font-weight: 500;
-    color: #ccc;
-    margin-top: 8px;
-  }
-  .char-card .role {
-    font-size: 11px;
-    color: #666;
-    margin-top: 2px;
-  }
+    /* Info */
+    .info-section {
+      max-width: 800px;
+      margin: -40px auto 0;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+      text-align: center;
+    }
 
-  /* Chapter List */
-  .chapters-section {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 20px 60px;
-  }
-  .chapters-section .label {
-    font-size: 11px;
-    letter-spacing: 6px;
-    color: #3a7bd5;
-    margin-bottom: 30px;
-    text-align: center;
-  }
+    .info-section .genre {
+      font-size: 11px;
+      letter-spacing: 6px;
+      color: #3a7bd5;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
 
-  .chapter-item {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 16px 20px;
-    border-bottom: 1px solid #1a1a1a;
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.2s ease;
-    border-radius: 8px;
-  }
-  .chapter-item:hover {
-    background: #141414;
-  }
+    .info-section h1 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
 
-  .ch-number {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 28px;
-    font-weight: 700;
-    color: #3a7bd5;
-    min-width: 60px;
-    text-align: center;
-  }
+    .info-section .subtitle {
+      font-size: 14px;
+      color: #666;
+      letter-spacing: 4px;
+      margin-bottom: 24px;
+    }
 
-  .ch-info {
-    flex: 1;
-  }
-  .ch-info .ch-title {
-    font-size: 18px;
-    font-weight: 500;
-    color: #fff;
-    margin-bottom: 4px;
-  }
-  .ch-info .ch-subtitle {
-    font-size: 12px;
-    color: #666;
-    letter-spacing: 1px;
-  }
-  .ch-info .ch-desc {
-    font-size: 13px;
-    color: #888;
-    margin-top: 6px;
-  }
+    .info-section .desc {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #999;
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
 
-  .ch-arrow {
-    font-size: 20px;
-    color: #333;
-    transition: color 0.2s ease, transform 0.2s ease;
-  }
-  .chapter-item:hover .ch-arrow {
-    color: #3a7bd5;
-    transform: translateX(4px);
-  }
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 0;
+      gap: 20px;
+    }
 
-  /* Footer */
-  .footer {
-    text-align: center;
-    padding: 40px 20px 60px;
-    border-top: 1px solid #1a1a1a;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-  .footer p {
-    font-size: 12px;
-    color: #444;
-    letter-spacing: 2px;
-  }
+    .divider .line {
+      width: 60px;
+      height: 1px;
+      background: #333;
+    }
 
-  /* Responsive */
-  @media (max-width: 768px) {
-    .info-section h1 { font-size: 28px; }
-    .char-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .ch-number { font-size: 22px; min-width: 44px; }
-    .ch-info .ch-title { font-size: 16px; }
-    .ch-info .ch-desc { display: none; }
-  }
-</style>
+    .divider .dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #3a7bd5;
+    }
+
+    /* Characters */
+    .characters-section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+      text-align: center;
+    }
+
+    .characters-section .label {
+      font-size: 11px;
+      letter-spacing: 6px;
+      color: #3a7bd5;
+      margin-bottom: 30px;
+    }
+
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+    }
+
+    .char-card {
+      text-align: center;
+    }
+
+    .char-card img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #222;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .char-card img:hover {
+      transform: scale(1.05);
+      border-color: #3a7bd5;
+    }
+
+    .char-card .name {
+      font-size: 13px;
+      font-weight: 500;
+      color: #ccc;
+      margin-top: 8px;
+    }
+
+    .char-card .role {
+      font-size: 11px;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    /* Chapter List */
+    .chapters-section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    .chapters-section .label {
+      font-size: 11px;
+      letter-spacing: 6px;
+      color: #3a7bd5;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .chapter-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #1a1a1a;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s ease;
+      border-radius: 8px;
+    }
+
+    .chapter-item:hover {
+      background: #141414;
+    }
+
+    .ch-number {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #3a7bd5;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .ch-info {
+      flex: 1;
+    }
+
+    .ch-info .ch-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .ch-info .ch-subtitle {
+      font-size: 12px;
+      color: #666;
+      letter-spacing: 1px;
+    }
+
+    .ch-info .ch-desc {
+      font-size: 13px;
+      color: #888;
+      margin-top: 6px;
+    }
+
+    .ch-arrow {
+      font-size: 20px;
+      color: #333;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .chapter-item:hover .ch-arrow {
+      color: #3a7bd5;
+      transform: translateX(4px);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 40px 20px 60px;
+      border-top: 1px solid #1a1a1a;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .footer p {
+      font-size: 12px;
+      color: #444;
+      letter-spacing: 2px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .info-section h1 {
+        font-size: 28px;
+      }
+
+      .char-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .ch-number {
+        font-size: 22px;
+        min-width: 44px;
+      }
+
+      .ch-info .ch-title {
+        font-size: 16px;
+      }
+
+      .ch-info .ch-desc {
+        display: none;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- Cover -->
-<div class="cover-section">
-  <img src="cover.png" alt="에이전트의 시대 커버">
-  <div class="cover-overlay"></div>
-</div>
+  <!-- Cover -->
+  <div class="cover-section">
+    <img src="cover.png" alt="에이전트의 시대 커버">
+    <div class="cover-overlay"></div>
+  </div>
 
-<!-- Info -->
-<div class="info-section">
-  <div class="genre">SF WEBTOON</div>
-  <h1>에이전트의 시대</h1>
-  <div class="subtitle">THE AGE OF AGENTS</div>
-  <p class="desc">
-    55세 전직 CTO 박정호가 AI 에이전트의 물결 속에서 새로운 시작을 찾아가는 이야기.
-    바이브코딩, 자율 AI, 그리고 사람의 가치에 대한 질문.
-  </p>
-</div>
+  <!-- Info -->
+  <div class="info-section">
+    <div class="genre">SF WEBTOON</div>
+    <h1>에이전트의 시대</h1>
+    <div class="subtitle">THE AGE OF AGENTS</div>
+    <p class="desc">
+      55세 전직 CTO 박정호가 AI 에이전트의 물결 속에서 새로운 시작을 찾아가는 이야기.
+      바이브코딩, 자율 AI, 그리고 사람의 가치에 대한 질문.
+    </p>
+  </div>
 
-<div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="divider">
+    <div class="line"></div>
+    <div class="dot"></div>
+    <div class="line"></div>
+  </div>
 
-<!-- Characters -->
-<div class="characters-section">
-  <div class="label">CHARACTERS</div>
-  <div class="char-grid">
-    <div class="char-card">
-      <img src="../images/character/char_park_jeongho.png" alt="박정호">
-      <div class="name">박정호</div>
-      <div class="role">전 넥스젠 CTO</div>
-    </div>
-    <div class="char-card">
-      <img src="../images/character/char_lee_seoyeon.png" alt="이서연">
-      <div class="name">이서연</div>
-      <div class="role">AI 에이전트 개발자</div>
-    </div>
-    <div class="char-card">
-      <img src="../images/character/char_choi_hyunwoo.png" alt="최현우">
-      <div class="name">최현우</div>
-      <div class="role">넥스젠 회장</div>
-    </div>
-    <div class="char-card">
-      <img src="../images/character/char_kim_minjun.png" alt="김민준">
-      <div class="name">김민준</div>
-      <div class="role">과기부 정책관</div>
-    </div>
-    <div class="char-card">
-      <img src="../images/character/char_park_jisu.png" alt="박지수">
-      <div class="name">박지수</div>
-      <div class="role">정호의 딸</div>
-    </div>
-    <div class="char-card">
-      <img src="../images/character/char_aria.png" alt="아리아">
-      <div class="name">아리아</div>
-      <div class="role">AI 에이전트</div>
+  <!-- Characters -->
+  <div class="characters-section">
+    <div class="label">CHARACTERS</div>
+    <div class="char-grid">
+      <div class="char-card">
+        <img src="character/char_park_jeongho.png" alt="박정호">
+        <div class="name">박정호</div>
+        <div class="role">전 넥스젠 CTO</div>
+      </div>
+      <div class="char-card">
+        <img src="character/char_lee_seoyeon.png" alt="이서연">
+        <div class="name">이서연</div>
+        <div class="role">AI 에이전트 개발자</div>
+      </div>
+      <div class="char-card">
+        <img src="character/char_choi_hyunwoo.png" alt="최현우">
+        <div class="name">최현우</div>
+        <div class="role">넥스젠 회장</div>
+      </div>
+      <div class="char-card">
+        <img src="character/char_kim_minjun.png" alt="김민준">
+        <div class="name">김민준</div>
+        <div class="role">과기부 정책관</div>
+      </div>
+      <div class="char-card">
+        <img src="character/char_park_jisu.png" alt="박지수">
+        <div class="name">박지수</div>
+        <div class="role">정호의 딸</div>
+      </div>
+      <div class="char-card">
+        <img src="character/char_aria.png" alt="아리아">
+        <div class="name">아리아</div>
+        <div class="role">AI 에이전트</div>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="divider">
+    <div class="line"></div>
+    <div class="dot"></div>
+    <div class="line"></div>
+  </div>
 
-<!-- Chapters -->
-<div class="chapters-section">
-  <div class="label">CHAPTERS</div>
+  <!-- Chapters -->
+  <div class="chapters-section">
+    <div class="label">CHAPTERS</div>
 
-  <a href="ch01/index.html" class="chapter-item">
-    <div class="ch-number">01</div>
-    <div class="ch-info">
-      <div class="ch-title">마지막 무대</div>
-      <div class="ch-subtitle">The Last Stage</div>
-      <div class="ch-desc">서른 해의 마지막 연설. 빈 사무실에서 발견한 태블릿 하나.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch01/index.html" class="chapter-item">
+      <div class="ch-number">01</div>
+      <div class="ch-info">
+        <div class="ch-title">마지막 무대</div>
+        <div class="ch-subtitle">The Last Stage</div>
+        <div class="ch-desc">서른 해의 마지막 연설. 빈 사무실에서 발견한 태블릿 하나.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-  <a href="ch02/index.html" class="chapter-item">
-    <div class="ch-number">02</div>
-    <div class="ch-info">
-      <div class="ch-title">바이브</div>
-      <div class="ch-subtitle">The Vibe</div>
-      <div class="ch-desc">성수동 밋업에서 목격한 바이브코딩. 삼천 명이 삼 분에 대체되는 충격.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch02/index.html" class="chapter-item">
+      <div class="ch-number">02</div>
+      <div class="ch-info">
+        <div class="ch-title">바이브</div>
+        <div class="ch-subtitle">The Vibe</div>
+        <div class="ch-desc">성수동 밋업에서 목격한 바이브코딩. 삼천 명이 삼 분에 대체되는 충격.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-  <a href="ch03/index.html" class="chapter-item">
-    <div class="ch-number">03</div>
-    <div class="ch-info">
-      <div class="ch-title">새로운 언어</div>
-      <div class="ch-subtitle">A New Language</div>
-      <div class="ch-desc">아리아와의 첫 대화. 데이터 너머의 무언가를 보는 법.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch03/index.html" class="chapter-item">
+      <div class="ch-number">03</div>
+      <div class="ch-info">
+        <div class="ch-title">새로운 언어</div>
+        <div class="ch-subtitle">A New Language</div>
+        <div class="ch-desc">아리아와의 첫 대화. 데이터 너머의 무언가를 보는 법.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-  <a href="ch04/index.html" class="chapter-item">
-    <div class="ch-number">04</div>
-    <div class="ch-info">
-      <div class="ch-title">결단</div>
-      <div class="ch-subtitle">The Decision</div>
-      <div class="ch-desc">넥스젠을 떠나 새로운 길을 택하다. 에이전틱 랩스의 시작.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch04/index.html" class="chapter-item">
+      <div class="ch-number">04</div>
+      <div class="ch-info">
+        <div class="ch-title">결단</div>
+        <div class="ch-subtitle">The Decision</div>
+        <div class="ch-desc">넥스젠을 떠나 새로운 길을 택하다. 에이전틱 랩스의 시작.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-  <a href="ch05/index.html" class="chapter-item">
-    <div class="ch-number">05</div>
-    <div class="ch-info">
-      <div class="ch-title">제로에서</div>
-      <div class="ch-subtitle">From Zero</div>
-      <div class="ch-desc">성수동 오피스, 첫 팀원, 첫 프로젝트. 모든 것이 제로에서.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch05/index.html" class="chapter-item">
+      <div class="ch-number">05</div>
+      <div class="ch-info">
+        <div class="ch-title">제로에서</div>
+        <div class="ch-subtitle">From Zero</div>
+        <div class="ch-desc">성수동 오피스, 첫 팀원, 첫 프로젝트. 모든 것이 제로에서.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-  <a href="ch06/index.html" class="chapter-item">
-    <div class="ch-number">06</div>
-    <div class="ch-info">
-      <div class="ch-title">주목</div>
-      <div class="ch-subtitle">Attention</div>
-      <div class="ch-desc">미디어의 스포트라이트. 그리고 넥스젠의 시선.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch06/index.html" class="chapter-item">
+      <div class="ch-number">06</div>
+      <div class="ch-info">
+        <div class="ch-title">주목</div>
+        <div class="ch-subtitle">Attention</div>
+        <div class="ch-desc">미디어의 스포트라이트. 그리고 넥스젠의 시선.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-  <a href="ch07/index.html" class="chapter-item">
-    <div class="ch-number">07</div>
-    <div class="ch-info">
-      <div class="ch-title">빛과 그림자</div>
-      <div class="ch-subtitle">Light and Shadow</div>
-      <div class="ch-desc">국가 스마트시티 수주. 성공의 이면에 드리운 그림자.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch07/index.html" class="chapter-item">
+      <div class="ch-number">07</div>
+      <div class="ch-info">
+        <div class="ch-title">빛과 그림자</div>
+        <div class="ch-subtitle">Light and Shadow</div>
+        <div class="ch-desc">국가 스마트시티 수주. 성공의 이면에 드리운 그림자.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-  <a href="ch08/index.html" class="chapter-item">
-    <div class="ch-number">08</div>
-    <div class="ch-info">
-      <div class="ch-title">포위</div>
-      <div class="ch-subtitle">Under Siege</div>
-      <div class="ch-desc">규제, 투자 철회, 외부의 압력. 사면초가.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch08/index.html" class="chapter-item">
+      <div class="ch-number">08</div>
+      <div class="ch-info">
+        <div class="ch-title">포위</div>
+        <div class="ch-subtitle">Under Siege</div>
+        <div class="ch-desc">규제, 투자 철회, 외부의 압력. 사면초가.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-  <a href="ch09/index.html" class="chapter-item">
-    <div class="ch-number">09</div>
-    <div class="ch-info">
-      <div class="ch-title">폭풍의 눈</div>
-      <div class="ch-subtitle">Eye of the Storm</div>
-      <div class="ch-desc">서연의 과거가 드러나다. 아리아의 독자적 행동.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch09/index.html" class="chapter-item">
+      <div class="ch-number">09</div>
+      <div class="ch-info">
+        <div class="ch-title">폭풍의 눈</div>
+        <div class="ch-subtitle">Eye of the Storm</div>
+        <div class="ch-desc">서연의 과거가 드러나다. 아리아의 독자적 행동.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-  <a href="ch10/index.html" class="chapter-item">
-    <div class="ch-number">10</div>
-    <div class="ch-info">
-      <div class="ch-title">해독</div>
-      <div class="ch-subtitle">Decryption</div>
-      <div class="ch-desc">72시간의 로그 속에 숨겨진 진실. 프로젝트 오라클.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch10/index.html" class="chapter-item">
+      <div class="ch-number">10</div>
+      <div class="ch-info">
+        <div class="ch-title">해독</div>
+        <div class="ch-subtitle">Decryption</div>
+        <div class="ch-desc">72시간의 로그 속에 숨겨진 진실. 프로젝트 오라클.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-  <a href="ch11/index.html" class="chapter-item">
-    <div class="ch-number">11</div>
-    <div class="ch-info">
-      <div class="ch-title">청문회</div>
-      <div class="ch-subtitle">The Hearing</div>
-      <div class="ch-desc">국회의사당. 진실과 거짓이 맞서는 증언대.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch11/index.html" class="chapter-item">
+      <div class="ch-number">11</div>
+      <div class="ch-info">
+        <div class="ch-title">청문회</div>
+        <div class="ch-subtitle">The Hearing</div>
+        <div class="ch-desc">국회의사당. 진실과 거짓이 맞서는 증언대.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-  <a href="ch12/index.html" class="chapter-item">
-    <div class="ch-number">12</div>
-    <div class="ch-info">
-      <div class="ch-title">새로운 새벽</div>
-      <div class="ch-subtitle">A New Dawn</div>
-      <div class="ch-desc">모든 폭풍이 지나간 뒤. 새벽빛 속의 새로운 시작.</div>
-    </div>
-    <div class="ch-arrow">→</div>
-  </a>
+    <a href="ch12/index.html" class="chapter-item">
+      <div class="ch-number">12</div>
+      <div class="ch-info">
+        <div class="ch-title">새로운 새벽</div>
+        <div class="ch-subtitle">A New Dawn</div>
+        <div class="ch-desc">모든 폭풍이 지나간 뒤. 새벽빛 속의 새로운 시작.</div>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
 
-</div>
+  </div>
 
-<!-- Footer -->
-<div class="footer">
-  <p>에이전트의 시대 — 전 12화 완결</p>
-</div>
+  <!-- Footer -->
+  <div class="footer">
+    <p>에이전트의 시대 — 전 12화 완결</p>
+  </div>
 
 </body>
+
 </html>
