@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>에이전트의 시대 - 제1장: 마지막 무대</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0) 100%);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .header h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #888;
+  }
+
+  .header .chapter-num {
+    font-size: 12px;
+    color: #555;
+    letter-spacing: 2px;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3a7bd5, #6fb3f2);
+    z-index: 200;
+    transition: width 0.1s ease;
+    width: 0%;
+  }
+
+  /* Main container */
+  .webtoon-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  /* Title section */
+  .title-section {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+  }
+
+  .title-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(58,123,213,0.08) 0%, transparent 70%);
+  }
+
+  .title-section .chapter-label {
+    font-size: 12px;
+    letter-spacing: 8px;
+    color: #3a7bd5;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+
+  .title-section h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  .title-section .subtitle {
+    font-size: 16px;
+    color: #666;
+    font-weight: 300;
+    letter-spacing: 2px;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #444;
+    font-size: 11px;
+    letter-spacing: 3px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .scroll-indicator .arrow {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(180deg, #444, transparent);
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* Panel */
+  .panel {
+    position: relative;
+    margin-bottom: 0;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .panel.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .panel img {
+    width: 100%;
+    display: block;
+    border-radius: 0;
+  }
+
+  /* Text overlay */
+  .panel-text {
+    position: relative;
+    padding: 40px 60px;
+    background: #0a0a0a;
+  }
+
+  .panel-text.narration {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+
+  .panel-text.narration p {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    line-height: 2;
+    color: #ccc;
+    font-weight: 400;
+  }
+
+  .panel-text.dialogue {
+    padding: 30px 60px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .panel-text.dialogue .speaker {
+    font-size: 12px;
+    color: #3a7bd5;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .panel-text.dialogue p {
+    font-size: 20px;
+    line-height: 1.6;
+    color: #fff;
+    font-weight: 500;
+    border-left: 2px solid #3a7bd5;
+    padding-left: 20px;
+  }
+
+  .panel-text.thought {
+    padding: 30px 60px;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .panel-text.thought p {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    line-height: 1.8;
+    color: #888;
+    font-style: italic;
+  }
+
+  /* Scene divider */
+  .scene-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 0;
+    gap: 20px;
+  }
+
+  .scene-divider .line {
+    width: 60px;
+    height: 1px;
+    background: #333;
+  }
+
+  .scene-divider .dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #3a7bd5;
+  }
+
+  /* End section */
+  .end-section {
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .end-section .end-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    color: #fff;
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+
+  .end-section .continue {
+    font-size: 13px;
+    color: #555;
+    letter-spacing: 3px;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .title-section h2 { font-size: 32px; }
+    .panel-text { padding: 30px 24px; }
+    .panel-text.narration { padding: 40px 24px; }
+    .panel-text.narration p { font-size: 15px; }
+    .panel-text.dialogue p { font-size: 17px; }
+    .panel-text.dialogue { padding: 24px; }
+    .panel-text.thought { padding: 24px; }
+    .panel-text.thought p { font-size: 15px; }
+    .header { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="header">
+  <h1>에이전트의 시대</h1>
+  <span class="chapter-num">Chapter 01</span>
+</div>
+
+<div class="webtoon-container">
+
+  <!-- Title -->
+  <div class="title-section">
+    <div class="chapter-label">Chapter One</div>
+    <h2>마지막 무대</h2>
+    <div class="subtitle">The Last Stage</div>
+    <div class="scroll-indicator">
+      SCROLL
+      <div class="arrow"></div>
+    </div>
+  </div>
+
+  <!-- Panel 1: Backstage -->
+  <div class="panel">
+    <img src="panel_01_backstage.png" alt="무대 뒤편 통로" loading="lazy">
+  </div>
+
+  <div class="panel-text narration panel">
+    <p>마이크가 울림을 잡았다. 대강당 천장의 LED 패널이 넥스젠 블루로 물들면서, 이천 석 좌석 위로 차가운 빛이 쏟아졌다.</p>
+  </div>
+
+  <div class="panel-text thought panel">
+    <p>서른 해. 반도체 회의실의 형광등 아래서 시작해 이 무대까지, 서른 해가 걸렸다.</p>
+  </div>
+
+  <!-- Panel 2: Speech -->
+  <div class="panel">
+    <img src="panel_02_speech.png" alt="퇴임 연설" loading="lazy">
+  </div>
+
+  <div class="panel-text dialogue panel">
+    <div class="speaker">박정호</div>
+    <p>"솔직한 이야기를 하겠습니다."</p>
+  </div>
+
+  <div class="panel-text dialogue panel">
+    <div class="speaker">박정호</div>
+    <p>"기술은 결국 사람을 향해야 합니다. 그걸 잊으면, 아무리 좋은 기술도 의미가 없습니다. 제가 서른 해 동안 배운 건, 결국 그겁니다."</p>
+  </div>
+
+  <!-- Panel 3: Applause -->
+  <div class="panel">
+    <img src="panel_03_applause.png" alt="의례적인 박수" loading="lazy">
+  </div>
+
+  <div class="panel-text narration panel">
+    <p>다시 박수가 터졌다. 이번에는 조금 길었다. 하지만 정호의 귀에는 같은 소리였다.<br>의례적이고, 적당하고, 곧 사라질 소리.</p>
+  </div>
+
+  <!-- Scene Divider -->
+  <div class="scene-divider">
+    <div class="line"></div>
+    <div class="dot"></div>
+    <div class="line"></div>
+  </div>
+
+  <!-- Panel 4: Daughter -->
+  <div class="panel">
+    <img src="panel_04_daughter.png" alt="딸과의 만남" loading="lazy">
+  </div>
+
+  <div class="panel-text dialogue panel">
+    <div class="speaker">박지수</div>
+    <p>"아빠, 연설 잘했어."</p>
+  </div>
+
+  <!-- Panel 5: Reception -->
+  <div class="panel">
+    <img src="panel_05_reception.png" alt="리셉션" loading="lazy">
+  </div>
+
+  <div class="panel-text dialogue panel">
+    <div class="speaker">박지수</div>
+    <p>"코딩은 이제 말로 하는 시대야, 아빠."</p>
+  </div>
+
+  <div class="panel-text thought panel">
+    <p>코딩은 말로 하는 시대. 그 시대에, 나는 뭐가 되는 건가.</p>
+  </div>
+
+  <!-- Scene Divider -->
+  <div class="scene-divider">
+    <div class="line"></div>
+    <div class="dot"></div>
+    <div class="line"></div>
+  </div>
+
+  <!-- Panel 6: Dark Office -->
+  <div class="panel">
+    <img src="panel_06_dark_office.png" alt="어두운 사무실" loading="lazy">
+  </div>
+
+  <div class="panel-text narration panel">
+    <p>38층 CTO 집무실. 이미 짐은 대부분 옮긴 뒤였다.<br>불을 켜지 않았다. 바깥 여의도의 불빛이 유리벽을 통해 들어오고 있었다.</p>
+  </div>
+
+  <!-- Panel 7: Tablet -->
+  <div class="panel">
+    <img src="panel_07_tablet.png" alt="태블릿 영상" loading="lazy">
+  </div>
+
+  <div class="panel-text narration panel">
+    <p>이건 코딩이 아니다. 정호가 알던 코딩은 엔지니어가 에디터 앞에 앉아 한 줄 한 줄 논리를 쌓아가는 일이었다. 그 모든 게, 이 영상 속에서는 한 사람과 AI의 대화로 치환되어 있었다.</p>
+  </div>
+
+  <div class="panel-text thought panel">
+    <p>정호의 왼쪽 눈 밑이 미세하게 떨렸다.</p>
+  </div>
+
+  <!-- Scene Divider -->
+  <div class="scene-divider">
+    <div class="line"></div>
+    <div class="dot"></div>
+    <div class="line"></div>
+  </div>
+
+  <!-- Panel 8: Night Walk -->
+  <div class="panel">
+    <img src="panel_08_night_walk.png" alt="마지막 퇴근" loading="lazy">
+  </div>
+
+  <div class="panel-text narration panel">
+    <p>서른 해가 끝났다. 손에는 상자 하나와 메모지 한 장이 남았다.</p>
+  </div>
+
+  <div class="panel-text thought panel">
+    <p>어디로 가는지는 정하지 않았다. 다만, 한 가지는 알고 있었다.</p>
+  </div>
+
+  <div class="panel-text dialogue panel" style="text-align: center;">
+    <p style="border: none; padding: 0; font-family: 'Noto Serif KR', serif; font-size: 28px; color: #fff; font-weight: 700;">아직 끝나지 않았다.</p>
+  </div>
+
+  <!-- End -->
+  <div class="end-section">
+    <div class="end-text">제1장 끝</div>
+    <div class="continue">TO BE CONTINUED</div>
+  </div>
+
+</div>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+  });
+
+  // Intersection Observer for fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  document.querySelectorAll('.panel').forEach(panel => {
+    observer.observe(panel);
+  });
+</script>
+
+</body>
+</html>

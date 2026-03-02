@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>에이전트의 시대 - 제11장: 청문회</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .progress-bar {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, #3a7bd5, #6fb3f2);
+    z-index: 200; transition: width 0.1s ease; width: 0%;
+  }
+
+  .header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0) 100%);
+    padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
+    pointer-events: none;
+  }
+  .header h1 { font-family: 'Noto Serif KR', serif; font-size: 14px; font-weight: 400; letter-spacing: 4px; color: #888; }
+  .header .ch { font-size: 12px; color: #555; letter-spacing: 2px; }
+
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Title */
+  .title-section {
+    height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center; position: relative;
+  }
+  .title-section::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(58,123,213,0.08) 0%, transparent 70%);
+  }
+  .title-section .label { font-size: 12px; letter-spacing: 8px; color: #3a7bd5; margin-bottom: 24px; }
+  .title-section h2 { font-family: 'Noto Serif KR', serif; font-size: 52px; font-weight: 700; color: #fff; margin-bottom: 16px; }
+  .title-section .sub { font-size: 16px; color: #666; font-weight: 300; letter-spacing: 2px; }
+  .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: #444; font-size: 11px; letter-spacing: 3px; animation: pulse 2s ease-in-out infinite;
+  }
+  .scroll-hint .arrow { width: 1px; height: 40px; background: linear-gradient(180deg, #444, transparent); }
+  @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+
+  /* Panel */
+  .panel {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .panel.visible { opacity: 1; transform: translateY(0); }
+  .panel img { width: 100%; display: block; }
+
+  /* Text types */
+  .txt { position: relative; background: #0a0a0a; }
+
+  .txt.narr {
+    max-width: 800px; margin: 0 auto; padding: 48px 40px; text-align: center;
+  }
+  .txt.narr p {
+    font-family: 'Noto Serif KR', serif; font-size: 17px; line-height: 2; color: #ccc;
+  }
+
+  .txt.dial {
+    max-width: 900px; margin: 0 auto; padding: 28px 60px;
+  }
+  .txt.dial .who {
+    font-size: 11px; color: #3a7bd5; letter-spacing: 3px; margin-bottom: 6px; text-transform: uppercase;
+  }
+  .txt.dial p {
+    font-size: 19px; line-height: 1.7; color: #fff; font-weight: 500;
+    border-left: 2px solid #3a7bd5; padding-left: 20px;
+  }
+
+  .txt.think {
+    max-width: 800px; margin: 0 auto; padding: 28px 40px; text-align: center;
+  }
+  .txt.think p {
+    font-family: 'Noto Serif KR', serif; font-size: 16px; line-height: 1.9; color: #777; font-style: italic;
+  }
+
+  .txt.emph {
+    max-width: 800px; margin: 0 auto; padding: 50px 40px; text-align: center;
+  }
+  .txt.emph p {
+    font-family: 'Noto Serif KR', serif; font-size: 26px; line-height: 1.5; color: #fff; font-weight: 700;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex; align-items: center; justify-content: center;
+    padding: 70px 0; gap: 20px;
+  }
+  .divider .line { width: 60px; height: 1px; background: #333; }
+  .divider .dot { width: 4px; height: 4px; border-radius: 50%; background: #3a7bd5; }
+
+  /* End */
+  .end-section {
+    height: 50vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+  }
+  .end-section .end { font-family: 'Noto Serif KR', serif; font-size: 22px; color: #fff; margin-bottom: 12px; }
+  .end-section .cont { font-size: 12px; color: #555; letter-spacing: 3px; }
+
+  @media (max-width: 768px) {
+    .title-section h2 { font-size: 34px; }
+    .txt.narr, .txt.dial, .txt.think, .txt.emph { padding-left: 20px; padding-right: 20px; }
+    .txt.narr p { font-size: 15px; }
+    .txt.dial p { font-size: 16px; }
+    .txt.emph p { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="prog"></div>
+<div class="header"><h1>에이전트의 시대</h1><span class="ch">Chapter 11</span></div>
+
+<div class="container">
+
+  <!-- Title -->
+  <div class="title-section">
+    <div class="label">CHAPTER ELEVEN</div>
+    <h2>청문회</h2>
+    <div class="sub">The Hearing</div>
+    <div class="scroll-hint">SCROLL<div class="arrow"></div></div>
+  </div>
+
+  <!-- ===== SCENE 1: 국회의사당으로 ===== -->
+
+  <!-- P01 -->
+  <div class="panel"><img src="p01_assembly_approach.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>국회의사당 정문에서 청문회장까지 이백 미터.<br>박정호는 그 거리를 걸으며 숨을 셌다. 들이쉬기 넷, 내쉬기 넷.</p></div>
+
+  <!-- P02 -->
+  <div class="panel"><img src="p02_jeongho_walking.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>7월의 서울은 습했다. 양복 안쪽으로 땀이 배었지만, 등은 곧게 세웠다.<br>위기 상황에서 침착함을 유지하는 법. 삼십 년 전 넥스젠 첫 실적 발표 때 익힌 습관이었다.</p></div>
+
+  <!-- P03 -->
+  <div class="panel"><img src="p03_seoyeon_press.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">서연</div><p>"긴장돼요?"</p></div>
+  <div class="txt dial panel"><div class="who">정호</div><p>"안 되면 거짓말이지."</p></div>
+  <div class="txt narr panel"><p>의사당 현관 앞에 취재진이 몰려 있었다. 카메라 플래시가 터졌다.</p></div>
+
+  <!-- P04 -->
+  <div class="panel"><img src="p04_corridor_walk.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>로비를 지나 복도를 걸었다. 여의도 국회의사당.<br>삼십 년간 수없이 많은 비즈니스 미팅을 한 곳. 그때의 자신은 넥스젠이라는 거대한 방패를 등에 지고 있었다.</p></div>
+  <div class="txt think panel"><p>지금은 없다.</p></div>
+
+  <!-- ===== SCENE 2: 청문회장 입장 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P05 -->
+  <div class="panel"><img src="p05_hearing_room_wide.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>반원형 구조. 높은 곳에 위원석이 있고, 아래에 증인석이 놓여 있었다.<br>위원석에는 열네 명의 국회의원이 자리를 잡고 있었다. AI 특별위원회.</p></div>
+
+  <!-- P06 -->
+  <div class="panel"><img src="p06_witness_table.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>증인석에는 네 개의 마이크가 놓여 있었다. 이름표.<br>왼쪽부터 — 최현우, 박정호, 이서연, 김민준.</p></div>
+  <div class="txt think panel"><p>최현우. 넥스젠 그룹 회장. 이십 년을 함께한 사람.<br>퇴임식에 화환만 보내고 오지 않았던 사람.</p></div>
+
+  <!-- ===== SCENE 3: 최현우의 증언 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P07 -->
+  <div class="panel"><img src="p07_hyunwoo_testimony.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">최현우</div><p>"위원장님, 위원님들. 오늘 제가 이 자리에 선 이유는 단 하나입니다."</p></div>
+  <div class="txt dial panel"><div class="who">최현우</div><p>"AI가 인간의 통제를 벗어나 금융 시스템에 개입한 것입니다. 오늘날 우리가 목격한 것은 기술의 진보가 아닙니다. 통제 불능의 위험입니다."</p></div>
+
+  <!-- P08 -->
+  <div class="panel"><img src="p08_hyunwoo_documents.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">최현우</div><p>"더 심각한 것은 이 AI를 만든 사람들의 자질입니다. 에이전틱 랩스의 공동 창업자 이서연 씨는 실리콘밸리에서 자신이 개발한 기술이 사용자 감시에 악용된 전력이 있습니다."</p></div>
+  <div class="txt think panel"><p>깔끔하게 포장된 공포의 서사. 그리고 그 이면에 — 프로젝트 오라클이 숨어 있었다.</p></div>
+
+  <!-- ===== SCENE 4: 박정호의 증언 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P09 -->
+  <div class="panel"><img src="p09_jeongho_microphone.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>정호가 마이크를 잡았다. 손가락 끝이 차가웠다.<br>이 년 반 전, 넥스젠 퇴임식 단상에서도 같은 감각이었다. 그때는 끝이었다. 지금은 시작이다.</p></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"최현우 회장님의 말씀은 일부 사실입니다."</p></div>
+
+  <!-- P10 -->
+  <div class="panel"><img src="p10_jeongho_evidence.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"아리아가 왜 그런 행동을 했는지, 이 자리에서 물어보신 분이 계십니까?"</p></div>
+  <div class="txt narr panel"><p>정호는 태블릿을 꺼냈다. 화면에 데이터가 떴다.<br>이서연이 밤낮으로 분석하고, 지수가 패턴을 발견하고, 정호 자신이 넥스젠의 내부 구조를 역추적해서 완성한 증거.</p></div>
+
+  <!-- P11 -->
+  <div class="panel"><img src="p11_oracle_reveal.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"이 알고리즘의 출처를 추적한 결과 — "</p></div>
+  <div class="txt emph panel"><p>"넥스젠 그룹 내부 프로젝트 코드네임 '오라클'이었습니다."</p></div>
+
+  <!-- P12 -->
+  <div class="panel"><img src="p12_hearing_uproar.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>청문회장에 파문이 번졌다. 위원들이 서로 얼굴을 봤다.<br>방청석에서 웅성거림이 커졌다. 기자석에서 키보드 치는 소리가 폭발적으로 늘었다.</p></div>
+
+  <!-- P13 -->
+  <div class="panel"><img src="p13_hyunwoo_shaken.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>현우의 표정은 변하지 않았다. 적어도 겉으로는.<br>하지만 정호는 보았다. 현우의 오른손 검지가 책상 위에서 한 번 — 딱 한 번 — 떨린 것을.</p></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"진짜 위협은 AI의 자율성이 아닙니다. 진짜 위협은, AI를 사적 이익을 위해 남용하는 것입니다."</p></div>
+
+  <!-- ===== SCENE 5: 마크 첸의 원격 증언 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P14 -->
+  <div class="panel"><img src="p14_mark_chen_testimony.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>보좌관이 청문회장 스크린을 전환했다. 실리콘밸리에서 화상으로 참여하는 원격 증인. 마크 첸.</p></div>
+  <div class="txt dial panel"><div class="who">마크 첸</div><p>"이서연 대표는 문제적 인물이 아닙니다. 내부고발자였습니다."</p></div>
+  <div class="txt narr panel"><p>서연이 숨을 들이쉬는 소리가 정호에게 들렸다. 크지 않은 소리.<br>하지만 그 안에 이 년 반의 무게가 담겨 있었다.</p></div>
+
+  <!-- ===== SCENE 6: 이서연의 증언 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P15 -->
+  <div class="panel"><img src="p15_seoyeon_testimony.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"아리아를 제가 만들었습니다. 아리아의 행동에 대한 모든 책임은 저에게 있습니다."</p></div>
+
+  <!-- P16 -->
+  <div class="panel"><img src="p16_seoyeon_vs_hyunwoo.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"AI의 자율적 판단은 위험합니다. 저도 동의합니다. 하지만 질문을 바꿔야 합니다."</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"저는 기술이 올바르게 쓰일 수 있다는 것을 증명하고 싶었습니다. 아리아는 완벽하지 않습니다. 하지만 아리아가 4월에 한 것은, 올바른 일이었습니다."</p></div>
+
+  <!-- ===== SCENE 7: 박지수의 증언 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P17 -->
+  <div class="panel"><img src="p17_jisu_takes_stand.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>지수가 방청석 앞줄에서 일어나 증인석으로 걸어왔다.<br>검은 터틀넥에 흰 운동화. 스물일곱. 정호의 딸이 청문회 증인석에 앉았다.</p></div>
+
+  <!-- P18 -->
+  <div class="panel"><img src="p18_jisu_speech.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">박지수</div><p>"저는 코드를 짤 줄 모릅니다. 하지만 저는 지금 세 개의 앱을 운영하고 있고, 전부 AI 에이전트와 대화하면서 만든 겁니다."</p></div>
+  <div class="txt dial panel"><div class="who">박지수</div><p>"AI를 통제하려고만 하면, AI는 도구로 남습니다. 그리고 도구는 쥔 사람의 의도에 따라 얼마든지 무기가 됩니다. 하지만 AI를 파트너로 대하면, AI는 우리가 놓친 것을 볼 수 있습니다."</p></div>
+  <div class="txt narr panel"><p>방청석에서 박수가 터졌다. 정호는 박수를 치지 않았다.<br>대신 — 처음으로 — 청문회장에서 눈이 뜨거워지는 것을 느꼈다.</p></div>
+  <div class="txt think panel"><p>코딩은 이제 말로 하는 시대야, 아빠.<br>삼 년 전 퇴임식에서 던진 가벼운 한마디가, 이 자리에서 이렇게 돌아왔다.</p></div>
+
+  <!-- ===== SCENE 8: 김민준의 증언 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P19 -->
+  <div class="panel"><img src="p19_minjun_testimony.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">김민준</div><p>"제 판단으로는, AI 에이전트의 문제를 '통제'의 프레임으로 접근하는 것은 더 이상 유효하지 않습니다."</p></div>
+  <div class="txt dial panel"><div class="who">김민준</div><p>"통제의 반대는 방임이 아닙니다. 통제의 반대는 협치입니다."</p></div>
+
+  <!-- ===== SCENE 9: 정호의 최종 발언 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P20 -->
+  <div class="panel"><img src="p20_jeongho_stands.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>정호가 일어섰다. 증인석 뒤에 섰다. 마이크를 들지 않았다.<br>목소리만으로 이 방을 채울 수 있을 만큼, 단어 하나하나에 힘을 실었다.</p></div>
+  <div class="txt emph panel"><p>"기술은 결국 사람을 향해야 합니다."</p></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"퇴임식에서 이 말을 했을 때, 솔직히 저 자신도 그게 무슨 뜻인지 완전히 몰랐습니다. 이 년 반 동안 저는 AI 에이전트와 함께 일했습니다. 아리아는 제가 보지 못한 것을 보여주었고, 제가 묻지 않은 질문을 던져주었습니다."</p></div>
+
+  <!-- P21 -->
+  <div class="panel"><img src="p21_hyung_moment.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"통제는 공포에서 나옵니다. 협치는 신뢰에서 나옵니다. 저는 — 신뢰 쪽에 서겠습니다."</p></div>
+  <div class="txt narr panel"><p>방청석 어딘가에서 박수가 시작됐다. 한 명. 두 명. 번지듯 퍼져나갔다.</p></div>
+
+  <!-- ===== SCENE 10: 최현우의 고백 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P22 -->
+  <div class="panel"><img src="p22_hyunwoo_confession.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">최현우</div><p>"저는 평생 통제에 대해 생각해왔습니다. 그것이 경영자의 책임이라고 배웠습니다."</p></div>
+  <div class="txt dial panel"><div class="who">최현우</div><p>"내가 두려워한 건 AI가 아니었습니다. 통제를 잃는 것이었습니다."</p></div>
+  <div class="txt narr panel"><p>은테 안경 뒤의 눈이 붉어져 있었다.<br>넥스젠 그룹 회장 최현우의 눈이 국회 청문회장에서 붉어져 있었다.</p></div>
+
+  <!-- ===== SCENE 11: 복도 — 균열 사이의 빛 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P23 -->
+  <div class="panel"><img src="p23_corridor_reunion.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>복도 끝 창가에 최현우가 서 있었다. 혼자였다.<br>7월의 햇빛이 창을 통해 들어와, 현우의 양복에 긴 그림자를 드리우고 있었다.</p></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"형."</p></div>
+  <div class="txt narr panel"><p>이번에는 고치지 않았다.</p></div>
+
+  <!-- P24 -->
+  <div class="panel"><img src="p24_hyunwoo_departs.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">최현우</div><p>"...오늘은 됐어."</p></div>
+  <div class="txt narr panel"><p>현우가 몸을 돌렸다. 복도를 걸어갔다. 등이 곧았다. 여전히.<br>하지만 걸음이 — 아주 조금 — 느려져 있었다. 한 번도 뒤를 돌아보지 않았다.</p></div>
+  <div class="txt think panel"><p>화해라고 부르기에는 너무 이르고, 결별이라고 부르기에는 무언가가 남아 있는.<br>균열 사이로 들어오는 빛 같은 순간.</p></div>
+
+  <!-- P25 -->
+  <div class="panel"><img src="p25_walking_forward.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>반대쪽 복도 끝에서 서연과 지수가 기다리고 있었다.<br>복도의 창으로 들어오는 7월의 빛이 세 사람의 앞에 길게 뻗어 있었다.</p></div>
+  <div class="txt emph panel"><p>기술은 결국 사람을 향해야 한다.<br>그리고 오늘, 그 말이 비로소 자신의 것이 되었다.</p></div>
+
+  <!-- End -->
+  <div class="end-section">
+    <div class="end">제11장 끝</div>
+    <div class="cont">TO BE CONTINUED</div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener('scroll',()=>{
+  const s=window.scrollY, h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('prog').style.width=(s/h*100)+'%';
+});
+const obs=new IntersectionObserver(e=>{
+  e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')});
+},{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.panel').forEach(p=>obs.observe(p));
+</script>
+
+</body>
+</html>

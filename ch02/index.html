@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>에이전트의 시대 - 제2장: 바이브</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .progress-bar {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, #3a7bd5, #6fb3f2);
+    z-index: 200; transition: width 0.1s ease; width: 0%;
+  }
+
+  .header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0) 100%);
+    padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
+    pointer-events: none;
+  }
+  .header h1 { font-family: 'Noto Serif KR', serif; font-size: 14px; font-weight: 400; letter-spacing: 4px; color: #888; }
+  .header .ch { font-size: 12px; color: #555; letter-spacing: 2px; }
+
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Title */
+  .title-section {
+    height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center; position: relative;
+  }
+  .title-section::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(58,123,213,0.08) 0%, transparent 70%);
+  }
+  .title-section .label { font-size: 12px; letter-spacing: 8px; color: #3a7bd5; margin-bottom: 24px; }
+  .title-section h2 { font-family: 'Noto Serif KR', serif; font-size: 52px; font-weight: 700; color: #fff; margin-bottom: 16px; }
+  .title-section .sub { font-size: 16px; color: #666; font-weight: 300; letter-spacing: 2px; }
+  .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: #444; font-size: 11px; letter-spacing: 3px; animation: pulse 2s ease-in-out infinite;
+  }
+  .scroll-hint .arrow { width: 1px; height: 40px; background: linear-gradient(180deg, #444, transparent); }
+  @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+
+  /* Panel */
+  .panel {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .panel.visible { opacity: 1; transform: translateY(0); }
+  .panel img { width: 100%; display: block; }
+
+  /* Text types */
+  .txt { position: relative; background: #0a0a0a; }
+
+  .txt.narr {
+    max-width: 800px; margin: 0 auto; padding: 48px 40px; text-align: center;
+  }
+  .txt.narr p {
+    font-family: 'Noto Serif KR', serif; font-size: 17px; line-height: 2; color: #ccc;
+  }
+
+  .txt.dial {
+    max-width: 900px; margin: 0 auto; padding: 28px 60px;
+  }
+  .txt.dial .who {
+    font-size: 11px; color: #3a7bd5; letter-spacing: 3px; margin-bottom: 6px; text-transform: uppercase;
+  }
+  .txt.dial p {
+    font-size: 19px; line-height: 1.7; color: #fff; font-weight: 500;
+    border-left: 2px solid #3a7bd5; padding-left: 20px;
+  }
+
+  .txt.think {
+    max-width: 800px; margin: 0 auto; padding: 28px 40px; text-align: center;
+  }
+  .txt.think p {
+    font-family: 'Noto Serif KR', serif; font-size: 16px; line-height: 1.9; color: #777; font-style: italic;
+  }
+
+  .txt.emph {
+    max-width: 800px; margin: 0 auto; padding: 50px 40px; text-align: center;
+  }
+  .txt.emph p {
+    font-family: 'Noto Serif KR', serif; font-size: 26px; line-height: 1.5; color: #fff; font-weight: 700;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex; align-items: center; justify-content: center;
+    padding: 70px 0; gap: 20px;
+  }
+  .divider .line { width: 60px; height: 1px; background: #333; }
+  .divider .dot { width: 4px; height: 4px; border-radius: 50%; background: #3a7bd5; }
+
+  /* End */
+  .end-section {
+    height: 50vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+  }
+  .end-section .end { font-family: 'Noto Serif KR', serif; font-size: 22px; color: #fff; margin-bottom: 12px; }
+  .end-section .cont { font-size: 12px; color: #555; letter-spacing: 3px; }
+
+  @media (max-width: 768px) {
+    .title-section h2 { font-size: 34px; }
+    .txt.narr, .txt.dial, .txt.think, .txt.emph { padding-left: 20px; padding-right: 20px; }
+    .txt.narr p { font-size: 15px; }
+    .txt.dial p { font-size: 16px; }
+    .txt.emph p { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="prog"></div>
+<div class="header"><h1>에이전트의 시대</h1><span class="ch">Chapter 02</span></div>
+
+<div class="container">
+
+  <!-- Title -->
+  <div class="title-section">
+    <div class="label">CHAPTER TWO</div>
+    <h2>바이브</h2>
+    <div class="sub">The Vibe</div>
+    <div class="scroll-hint">SCROLL<div class="arrow"></div></div>
+  </div>
+
+  <!-- ===== SCENE 1: 골프장 — 퇴임 후 무료한 일상 ===== -->
+
+  <!-- P01 -->
+  <div class="panel"><img src="p01_golf_course.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>골프가 지루해진 건 삼 일째였다.<br>용인의 프라이빗 코스에서 드라이버를 휘둘렀지만, 공은 페어웨이를 벗어나 러프에 처박혔다.</p></div>
+
+  <!-- P02 -->
+  <div class="panel"><img src="p02_jeongho_troubled.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>이백 야드 너머의 그린이 아니라,<br>머릿속에는 어젯밤 태블릿에서 본 영상이 맴돌았다.<br>스물여섯쯤 돼 보이는 청년이 노트북 앞에서 혼잣말을 하면<br>화면 위로 코드가 쏟아지던 장면.</p></div>
+  <div class="txt think panel"><p>퇴임 후 한 달. 제주도, 한라산, 교토.<br>그 모든 곳에서 같은 감각과 마주했다. 손에 쥔 것이 아무것도 없다는 느낌.</p></div>
+
+  <!-- P03 -->
+  <div class="panel"><img src="p03_jisu_message.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">박지수 (메시지)</div><p>"아빠 새해 복 많이 받아! 나 요즘 AI로 앱 하나 만들고 있어. 코드 한 줄도 안 쓰고! 아빠도 한번 해봐 ㅋㅋ"</p></div>
+  <div class="txt think panel"><p>코드 한 줄도 안 쓰고. 자신이 넥스젠에서 관리해온 개발 조직이 삼천 명이었다.<br>코드를 짜는 삼천 명의 엔지니어. 그런데 코드를 한 줄도 안 쓴다고?</p></div>
+
+  <!-- ===== SCENE 2: 성수동 바이브 밋업 도착 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P04 -->
+  <div class="panel"><img src="p04_vibe_meetup_exterior.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>일월 셋째 주 목요일, 서울 성수동.<br>리노베이션된 붉은 벽돌 건물 삼 층짜리. 입구에 네온 사인이 깜빡였다.<br><em>VIBE MEETUP SEOUL #37</em></p></div>
+
+  <!-- P05 -->
+  <div class="panel"><img src="p05_meetup_interior.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>후드티와 운동화. 노트북 가방을 맨 이십 대, 삼십 대.<br>벽면의 대형 스크린에는 코드가 실시간으로 흘러가고,<br>한쪽에서는 누군가 AR 인터페이스로 무언가를 설계하고 있었다.</p></div>
+
+  <!-- P06 -->
+  <div class="panel"><img src="p06_audience_waiting.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>정호는 자신의 옥스퍼드 셔츠와 치노 팬츠를 내려다봤다.<br>여기서 넥타이를 맨 사람은 아마 경비원뿐일 거라는 생각이 들었다.</p></div>
+  <div class="txt dial panel"><div class="who">사회자</div><p>"자, 오늘의 메인 세션입니다. 이서연 님의 '아리아' 라이브 데모, 시작하겠습니다!"</p></div>
+
+  <!-- ===== SCENE 3: 이서연 무대 등장 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P07 -->
+  <div class="panel"><img src="p07_seoyeon_entrance.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>무대 왼쪽에서 한 여자가 걸어 나왔다.<br>단발머리, 검은 후드티, 흰 운동화.<br>허리를 숙여 인사하는 법 없이, 관객을 한 번 쓱 훑고는 노트북 앞에 섰다.</p></div>
+
+  <!-- P08 -->
+  <div class="panel"><img src="p08_seoyeon_introduces_aria.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"오늘은 PPT 없이 갈게요. 데모 한 번이 PPT 백 장보다 낫잖아요."</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"이건 아리아입니다. 제가 만든 AI 에이전트예요. 코드 에이전트라고 부르기엔 좀 모자라고, 동료라고 부르기엔... 글쎄, 아직은 좀 이르려나."</p></div>
+
+  <!-- ===== SCENE 4: 아리아 라이브 데모 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P09 -->
+  <div class="panel"><img src="p09_aria_coding_demo.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>화면이 네 개의 패널로 분할됐다. 각 패널에서 코드가 흘러내렸다.<br>React 컴포넌트, API 엔드포인트, 데이터베이스 테이블, 매칭 알고리즘.<br>코드가 생성되는 게 아니라 흘러나오는 것 같았다. 마치 댐의 수문이 열린 것처럼.</p></div>
+
+  <!-- P10 -->
+  <div class="panel"><img src="p10_seoyeon_aria_dialogue.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"매칭 엔진에서 위치 가중치 비율 좀 줄여. 삼십 퍼센트면 돼."</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"프로필 카드 UI, 둥근 모서리 말고 각진 걸로 바꿔."</p></div>
+  <div class="txt narr panel"><p>그녀의 목소리는 코딩 언어와 자연어 사이를 자유롭게 오갔다.<br>아리아는 즉시 반영했다. 대화였다.<br>상사가 부하에게 지시하는 것이 아니라, 두 명의 엔지니어가 나란히 앉아 작업하는 것에 가까웠다.</p></div>
+
+  <!-- P11 -->
+  <div class="panel"><img src="p11_prototype_reveal.png" alt="" loading="lazy"></div>
+  <div class="txt emph panel"><p>삼 분.</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"삼 분이요. 물론 이건 MVP고, 프로덕션 레벨로 가려면 더 손봐야 해요. 하지만 아이디어에서 동작하는 프로토타입까지 삼 분. 이게 바이브코딩이에요."</p></div>
+
+  <!-- P12 -->
+  <div class="panel"><img src="p12_jeongho_frozen_shock.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>정호는 박수를 치지 못했다. 두 손이 무릎 위에 얹힌 채 움직이지 않았다.</p></div>
+  <div class="txt think panel"><p>넥스젠 개발 2본부, 삼천 명의 엔지니어, 스무 개의 팀, 일곱 단계의 코드 리뷰 프로세스.<br>요구사항 접수에서 배포까지 최소 사 개월.<br>그가 십오 년에 걸쳐 구축하고 다듬고 최적화해온 시스템.<br>그것의 첫 단계를 — 이 작은 여자가 AI에게 말 몇 마디를 건네는 것으로 삼 분 만에 해치웠다.</p></div>
+
+  <!-- ===== SCENE 5: 아리아의 질문 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P13 -->
+  <div class="panel"><img src="p13_aria_question_moment.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>두 번째 데모. 실시간 교통 데이터를 분석해 배달 경로를 최적화하는 시스템.<br>서울 지도 위에 배달 경로가 색깔별로 그어졌다.<br>그때, 아리아의 인디케이터 색이 노랑으로 바뀌었다.</p></div>
+
+  <!-- P14 -->
+  <div class="panel"><img src="p14_aria_asks_question.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">아리아</div><p>"이서연 님, 한 가지 질문이 있습니다."</p></div>
+  <div class="txt emph panel"><p>"이 기능은 사용자에게 정말 필요할까요?"</p></div>
+
+  <!-- P15 -->
+  <div class="panel"><img src="p15_stunned_silence.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>삼백 명의 공간이 조용해졌다.</p></div>
+  <div class="txt dial panel"><div class="who">아리아</div><p>"배달 기사의 피로도를 시스템이 관리한다는 것은, 기사의 자율적 판단을 시스템이 대체한다는 의미이기도 합니다. 기사가 스스로 쉬고 싶을 때 쉴 수 있는 구조와, 시스템이 쉬라고 지시하는 구조는 다릅니다."</p></div>
+
+  <!-- P16 -->
+  <div class="panel"><img src="p16_seoyeon_composure.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"좋은 질문이야."</p></div>
+  <div class="txt narr panel"><p>그녀가 관객을 향해 돌아섰다.</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"보셨죠? 아리아가 방금 한 건 단순한 코드 생성이 아니에요. 제가 시키지 않은 질문을 스스로 만들어냈어요. 이게 바이브코딩의 진짜 의미예요."</p></div>
+
+  <!-- ===== SCENE 6: 정호의 충격과 내면 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P17 -->
+  <div class="panel"><img src="p17_jeongho_spine_chill.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>정호의 등줄기를 무언가가 훑고 지나갔다.<br>차갑지도 뜨겁지도 않은, 이름을 붙이기 어려운 감각.<br>이 AI가 — 요구사항의 윤리적 함의를 스스로 짚어낸 것이다.</p></div>
+
+  <!-- P18 -->
+  <div class="panel"><img src="p18_jeongho_chin_hand.png" alt="" loading="lazy"></div>
+  <div class="txt think panel"><p>삼십 년간 코드를 짜는 사람들을 관리했다.<br>좋은 코드란 무엇인지 정의하고, 코드 리뷰 프로세스를 설계하고, 기술 로드맵을 수립했다.<br>그 모든 것이 "코드를 잘 짜기 위한" 구조였다.</p></div>
+  <div class="txt emph panel"><p>그런데 코드를 짜는 행위 자체가 사라지고 있다면.</p></div>
+  <div class="txt think panel"><p>삼천 명의 개발 조직. 일곱 단계의 코드 리뷰. 이십 개의 팀.<br>그것이 다 불필요해진다면.</p></div>
+
+  <div class="txt narr panel"><p>정호의 숨이 짧아졌다. 맥주잔을 내려놓는 손에 힘이 들어갔다.</p></div>
+  <div class="txt think panel"><p>내가 관리해온 수천 명의 개발 조직... 이게 다 불필요해진다는 건가?</p></div>
+  <div class="txt narr panel"><p>하지만 그의 가슴 한쪽이 알고 있었다. 저것은 시작이다.<br>그리고 아리아가 던진 그 질문 — 그것은 코딩 능력의 문제가 아니었다. 판단의 문제였다.</p></div>
+  <div class="txt emph panel"><p>기계가 판단을 한다.</p></div>
+
+  <!-- ===== SCENE 7: 밋업 후 — 이서연과 대화 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P19 -->
+  <div class="panel"><img src="p19_jeongho_watching.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>밋업이 끝나고 사람들이 빠져나갔다.<br>정호는 일 층 바에서 혼자 탄산수를 마시며 서 있었다.<br>이서연은 무대 뒤쪽에서 참석자들과 이야기하고 있었다.<br>그 무리에 끼어드는 건 분위기에 맞지 않았다. 알고 있었다.</p></div>
+  <div class="txt narr panel"><p>그럼에도 발이 그쪽으로 향했다.</p></div>
+
+  <!-- P20 -->
+  <div class="panel"><img src="p20_business_card_exchange.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"데모 잘 봤습니다. 박정호입니다."</p></div>
+  <div class="txt narr panel"><p>넥스젠 그룹 CTO라고 적힌 명함. 퇴임 후 새 명함을 만들 이유가 없어서<br>아직 옛 것을 들고 다녔다. 쓸쓸한 습관이었다.</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"퇴임하셨나 보네요. 넥스젠이면... 개발 조직 한 삼천 명 되죠?"</p></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"됐었지."</p></div>
+
+  <!-- P21 -->
+  <div class="panel"><img src="p21_honest_conversation.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"오늘 데모 보시면서 어떤 생각 하셨어요?"</p></div>
+  <div class="txt emph panel"><p>"무서웠습니다."</p></div>
+  <div class="txt narr panel"><p>말이 입에서 나온 뒤에야 정호는 자신이 그 단어를 꺼냈다는 걸 깨달았다.<br>무섭다. 그가 절대 쓰지 않는 단어.</p></div>
+
+  <!-- P22 -->
+  <div class="panel"><img src="p22_seoyeon_real_smile.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"삼천 명이 삼 분에 대체되는 걸 봤으니까."</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"솔직하시네요. 대기업 임원분들 만나면 보통 '인상적이지만 아직 한계가 있죠' 이런 얘기하시거든요."</p></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"더 이상 지킬 포지션이 없는 사람한테는 통하지 않는 방어선이죠."</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"어쨌든, 흔하지 않네요."</p></div>
+
+  <!-- P23 -->
+  <div class="panel"><img src="p23_seongsu_night_walk.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>건물을 나서자 성수동의 밤공기가 차갑게 피부에 와 닿았다. 일월의 서울.<br>골목 사이로 스타트업 사무실들의 불빛이 새어나왔다.<br>넥스젠 본사의 야근 불빛들과 여기의 불빛은 같은 색이었지만 다른 온도를 가지고 있었다.</p></div>
+
+  <!-- P24 -->
+  <div class="panel"><img src="p24_cancel_golf.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>정호는 걸으며 주머니에서 스마트폰을 꺼냈다.<br>내일 골프 예약을 취소해야 했다.</p></div>
+  <div class="txt think panel"><p>아니, 아마 모레 것도.</p></div>
+
+  <!-- End -->
+  <div class="end-section">
+    <div class="end">제2장 끝</div>
+    <div class="cont">TO BE CONTINUED</div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener('scroll',()=>{
+  const s=window.scrollY, h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('prog').style.width=(s/h*100)+'%';
+});
+const obs=new IntersectionObserver(e=>{
+  e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')});
+},{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.panel').forEach(p=>obs.observe(p));
+</script>
+
+</body>
+</html>

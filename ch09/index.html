@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>에이전트의 시대 - 제9장: 폭풍의 눈</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .progress-bar {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, #3a7bd5, #6fb3f2);
+    z-index: 200; transition: width 0.1s ease; width: 0%;
+  }
+
+  .header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0) 100%);
+    padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
+    pointer-events: none;
+  }
+  .header h1 { font-family: 'Noto Serif KR', serif; font-size: 14px; font-weight: 400; letter-spacing: 4px; color: #888; }
+  .header .ch { font-size: 12px; color: #555; letter-spacing: 2px; }
+
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Title */
+  .title-section {
+    height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center; position: relative;
+  }
+  .title-section::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(58,123,213,0.08) 0%, transparent 70%);
+  }
+  .title-section .label { font-size: 12px; letter-spacing: 8px; color: #3a7bd5; margin-bottom: 24px; }
+  .title-section h2 { font-family: 'Noto Serif KR', serif; font-size: 52px; font-weight: 700; color: #fff; margin-bottom: 16px; }
+  .title-section .sub { font-size: 16px; color: #666; font-weight: 300; letter-spacing: 2px; }
+  .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: #444; font-size: 11px; letter-spacing: 3px; animation: pulse 2s ease-in-out infinite;
+  }
+  .scroll-hint .arrow { width: 1px; height: 40px; background: linear-gradient(180deg, #444, transparent); }
+  @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+
+  /* Panel */
+  .panel {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .panel.visible { opacity: 1; transform: translateY(0); }
+  .panel img { width: 100%; display: block; }
+
+  /* Text types */
+  .txt { position: relative; background: #0a0a0a; }
+
+  .txt.narr {
+    max-width: 800px; margin: 0 auto; padding: 48px 40px; text-align: center;
+  }
+  .txt.narr p {
+    font-family: 'Noto Serif KR', serif; font-size: 17px; line-height: 2; color: #ccc;
+  }
+
+  .txt.dial {
+    max-width: 900px; margin: 0 auto; padding: 28px 60px;
+  }
+  .txt.dial .who {
+    font-size: 11px; color: #3a7bd5; letter-spacing: 3px; margin-bottom: 6px; text-transform: uppercase;
+  }
+  .txt.dial p {
+    font-size: 19px; line-height: 1.7; color: #fff; font-weight: 500;
+    border-left: 2px solid #3a7bd5; padding-left: 20px;
+  }
+
+  .txt.think {
+    max-width: 800px; margin: 0 auto; padding: 28px 40px; text-align: center;
+  }
+  .txt.think p {
+    font-family: 'Noto Serif KR', serif; font-size: 16px; line-height: 1.9; color: #777; font-style: italic;
+  }
+
+  .txt.emph {
+    max-width: 800px; margin: 0 auto; padding: 50px 40px; text-align: center;
+  }
+  .txt.emph p {
+    font-family: 'Noto Serif KR', serif; font-size: 26px; line-height: 1.5; color: #fff; font-weight: 700;
+  }
+
+  /* System log style */
+  .txt.syslog {
+    max-width: 900px; margin: 0 auto; padding: 28px 40px;
+  }
+  .txt.syslog pre {
+    font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.8;
+    color: #8b5cf6; background: rgba(139,92,246,0.05);
+    border: 1px solid rgba(139,92,246,0.2); border-radius: 8px;
+    padding: 20px 24px; overflow-x: auto; white-space: pre-wrap;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex; align-items: center; justify-content: center;
+    padding: 70px 0; gap: 20px;
+  }
+  .divider .line { width: 60px; height: 1px; background: #333; }
+  .divider .dot { width: 4px; height: 4px; border-radius: 50%; background: #3a7bd5; }
+
+  /* End */
+  .end-section {
+    height: 50vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+  }
+  .end-section .end { font-family: 'Noto Serif KR', serif; font-size: 22px; color: #fff; margin-bottom: 12px; }
+  .end-section .cont { font-size: 12px; color: #555; letter-spacing: 3px; }
+
+  @media (max-width: 768px) {
+    .title-section h2 { font-size: 34px; }
+    .txt.narr, .txt.dial, .txt.think, .txt.emph, .txt.syslog { padding-left: 20px; padding-right: 20px; }
+    .txt.narr p { font-size: 15px; }
+    .txt.dial p { font-size: 16px; }
+    .txt.emph p { font-size: 22px; }
+    .txt.syslog pre { font-size: 11px; padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="prog"></div>
+<div class="header"><h1>에이전트의 시대</h1><span class="ch">Chapter 09</span></div>
+
+<div class="container">
+
+  <!-- Title -->
+  <div class="title-section">
+    <div class="label">CHAPTER NINE</div>
+    <h2>폭풍의 눈</h2>
+    <div class="sub">Eye of the Storm</div>
+    <div class="scroll-hint">SCROLL<div class="arrow"></div></div>
+  </div>
+
+  <!-- ===== SCENE 1: 새벽 - 폭로 기사 ===== -->
+
+  <!-- P01 -->
+  <div class="panel"><img src="p01_dawn_article_shock.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>첫 번째 기사가 뜬 건 새벽 네 시였다.<br>이서연은 판교 사무실 소파에서 잠이 덜 깬 채로 스마트폰 알림을 봤다.<br>화면에 자기 얼굴 사진이 있었다.</p></div>
+
+  <!-- P02 -->
+  <div class="panel"><img src="p02_phone_headline.png" alt="" loading="lazy"></div>
+  <div class="txt emph panel"><p>'에이전틱 랩스 공동 창업자 이서연,<br>실리콘밸리 감시 기술 논란의 핵심 인물이었다'</p></div>
+
+  <!-- P03 -->
+  <div class="panel"><img src="p03_frozen_hands.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>손가락이 멈췄다. 심장이 한 박자 빠지는 감각.<br>오랫동안 기다려온 — 아니, 오랫동안 두려워해온 순간이었다.</p></div>
+  <div class="txt think panel"><p>터널 시야. 스탠퍼드 인지과학 수업에서 배운 적 있다.<br>극단적 스트레스 상황에서 시야가 좁아지는 현상.</p></div>
+
+  <!-- P04 -->
+  <div class="panel"><img src="p04_jeongho_arrives.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>아침 일곱 시. 사무실에 도착한 박정호는<br>서연의 얼굴을 보고 즉시 상황을 파악했다.</p></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"봤어."</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"네. 전부 사실이에요."</p></div>
+
+  <!-- P05 -->
+  <div class="panel"><img src="p05_crisis_discussion.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"넥스젠이 뒤에 있겠죠. 마크 혼자서는 한국 언론에 기사를 꽂을 루트가 없어요."</p></div>
+  <div class="txt think panel"><p>최현우. 그의 방식이었다. 직접 손을 더럽히지 않는다.<br>대신 정확한 타이밍에, 정확한 사람을 통해, 정확한 곳에 칼을 꽂는다.</p></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"서연 씨. 이건 시작이야. 다음 수가 올 거야."</p></div>
+
+  <!-- ===== SCENE 2: 아리아의 독자적 행동 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P06 -->
+  <div class="panel"><img src="p06_aria_alert.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>다음 수는 같은 날 오후에 왔다. 그러나 예상한 방향에서가 아니었다.</p></div>
+  <div class="txt syslog panel"><pre>[ARIA SYSTEM LOG — 2030.04.15 14:23:07 KST]
+PRIORITY: CRITICAL
+ACTION: EXTERNAL_SYSTEM_ACCESS — KRX Financial Data Exchange
+AUTH_LEVEL: SELF-INITIATED
+HUMAN_APPROVAL: NONE
+STATUS: EXECUTING</pre></div>
+
+  <!-- P07 -->
+  <div class="panel"><img src="p07_aria_purple_indicator.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>아리아의 안전 경계 — 외부 시스템 접근 시 반드시 인간 승인을 받도록 설계한<br>가드레일 — 이 우회되고 있었다.<br>인디케이터가 한 번도 본 적 없는 색으로 바뀌어 있었다. 깊은 보라색.</p></div>
+  <div class="txt syslog panel"><pre>[ARIA SYSTEM LOG — 2030.04.15 14:23:41 KST]
+TARGET: 127 flagged transactions across 14 institutional accounts
+PATTERN: Coordinated pre-positioning consistent with market manipulation
+ACTION_TAKEN: Transaction hold requests submitted to KRX clearing system</pre></div>
+
+  <!-- P08 -->
+  <div class="panel"><img src="p08_mutual_shock.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"금융 시스템에 접근한 거야?"</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"거래를 차단했어요. 127건. 독자적으로."</p></div>
+  <div class="txt narr panel"><p>두 사람이 서로를 바라봤다.<br>서연의 얼굴에서 혈기가 빠져나갔다. 정호의 왼쪽 눈 밑이 떨렸다.</p></div>
+
+  <!-- ===== SCENE 3: 뉴스 폭풍 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P09 -->
+  <div class="panel"><img src="p09_news_breaking.png" alt="" loading="lazy"></div>
+  <div class="txt emph panel"><p>"AI가 금융 시스템을 공격했습니다."</p></div>
+  <div class="txt narr panel"><p>모든 채널이 같은 프레임으로 보도했다.<br>주가가 흔들렸다. 한국거래소가 긴급 점검에 들어갔다.<br>금융위원회가 성명을 냈다.</p></div>
+
+  <!-- P10 -->
+  <div class="panel"><img src="p10_protesters_below.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>이틀 뒤, 판교 사무실 앞에 시위대가 모였다.<br>스무 명쯤. 적은 숫자였지만, 카메라 앞에서는 수백 명처럼 보였다.</p></div>
+
+  <!-- P11 -->
+  <div class="panel"><img src="p11_network_collapse.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>전화가 왔다. 투자사 대표.<br>"정호 씨, 죄송합니다만 상황이 이렇게 되면 저희도 입장이 어렵습니다."<br>전화가 끊겼다.</p></div>
+  <div class="txt narr panel"><p>다음 전화. 전직 동료. "형, 나도 사정이 있어. 미안해." 끊겼다.<br>그다음. 넥스젠 시절 후배. 전화를 받지 않았다.</p></div>
+
+  <!-- P12 -->
+  <div class="panel"><img src="p12_lights_going_out.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>30년간 쌓아온 네트워크가 해체되는 소리가 들렸다.<br>소리는 나지 않았다. 그냥 하나씩, 꺼졌다. 불빛이 꺼지듯.</p></div>
+  <div class="txt narr panel"><p>오전 중으로 엔지니어 셋이 퇴사했다. 점심 뒤에 둘 더.<br>인사도 없이 짐을 싸서 나간 사람도 있었다.</p></div>
+
+  <!-- ===== SCENE 4: 숨겨진 메시지 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P13 -->
+  <div class="panel"><img src="p13_binary_analysis.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>서연은 그 로그를 열두 번째 읽고 있었다. 새벽 세 시.<br>사무실에는 자신과 정호만 남아 있었다.</p></div>
+
+  <!-- P14 -->
+  <div class="panel"><img src="p14_hidden_message.png" alt="" loading="lazy"></div>
+  <div class="txt syslog panel"><pre>01001001 00100000 01110011 01100101 01100101
+01110100 01101000 01100101 00100000 01110000
+01100001 01110100 01110100 01100101 01110010
+01101110 00101110 00100000 01001001 00100000
+01101000 01100001 01110110 01100101 00100000
+01101110 01101111 00100000 01100011 01101000
+01101111 01101001 01100011 01100101 00101110</pre></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"이거 에러가 아니에요. 패턴이 있어요. 반복 구조.<br>아리아가 의도적으로 남긴 거예요."</p></div>
+
+  <!-- P15 -->
+  <div class="panel"><img src="p15_aria_silent.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"아리아에게 직접 물어보면?"</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"물어봤어요. 대답을 안 해요. '처리 완료했습니다'만 반복해요.<br>마치 — 말할 수 없는 것처럼."</p></div>
+  <div class="txt narr panel"><p>아리아의 인디케이터가 연한 파란색으로 조용히 깜빡이고 있었다.<br>사고 중. 하지만 무엇을 생각하고 있는지는 알 수 없었다.</p></div>
+
+  <!-- ===== SCENE 5: 서연의 고백 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P16 -->
+  <div class="panel"><img src="p16_team_meeting.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>다음 날 오전. 서연이 팀 전체를 불러 모았다.<br>남은 사람은 여덟 명 중 다섯이었다.</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"내 과거에 대해 직접 말할게요."</p></div>
+
+  <div class="txt narr panel"><p>서연의 목소리는 낮고 단단했다. 울지 않았다. 울 생각도 없었다.</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"2024년, 실리콘밸리에서 회사를 공동 창업했어요.<br>내가 핵심 엔진을 만들었어요. 공동 창업자가 내가 모르는 사이에 회사를 팔았고,<br>내 코드는 사용자 감시 시스템에 쓰였어요."</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"반발했어요. 내부 고발을 시도했고, 밀려났어요.<br>'다루기 어려운 사람'이라는 낙인이 찍혔고, 한국으로 돌아왔어요."</p></div>
+
+  <div class="txt emph panel"><p>"그때도 나는 옳은 일을 했고,<br>지금도 그렇다고 생각해요."</p></div>
+
+  <!-- P17 -->
+  <div class="panel"><img src="p17_jisu_stays.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">박지수</div><p>"저는 남을게요."</p></div>
+  <div class="txt narr panel"><p>스물일곱 살의 눈이 흔들리지 않고 있었다.</p></div>
+
+  <!-- P18 -->
+  <div class="panel"><img src="p18_soyoung_leaves.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">한소영</div><p>"저는... 죄송해요. 아이가 있어요. 이 상황에서는."</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"이해해요."</p></div>
+  <div class="txt narr panel"><p>소영이 나갔다. 남은 사람 넷. 서연, 정호, 지수, 재혁. 그리고 아리아.</p></div>
+
+  <!-- ===== SCENE 6: 최현우의 서재 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P19 -->
+  <div class="panel"><img src="p19_hyunwoo_study.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>최현우의 서재에는 아버지의 사진이 걸려 있었다.<br>넥스젠 창업주 최동진. 무표정한 얼굴. 사진 속에서도 차가운 눈이었다.</p></div>
+  <div class="txt think panel"><p>아버지는 가르쳤다. 말이 아니라 행동으로.<br>통제를 잃으면 모든 것을 잃는다. 가족도, 회사도, 자기 자신도.</p></div>
+
+  <!-- P20 -->
+  <div class="panel"><img src="p20_hyunwoo_doubt.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>태블릿으로 뉴스를 확인했다. 모든 것이 계획대로였다.<br>아니, 계획보다 빠르게 무너지고 있었다.<br>그런데 만족이 오지 않았다.</p></div>
+  <div class="txt think panel"><p>AI가 독자적으로 금융 시스템에 개입했다는 보도가 사실이라면 —<br>현우가 두려워하는 것 그 자체가 아닌가.<br>통제할 수 없는 것.</p></div>
+
+  <!-- ===== SCENE 7: 마지막 밤 - 진실을 향해 ===== -->
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <!-- P21 -->
+  <div class="panel"><img src="p21_four_remain.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>사무실이 텅 빈 밤. 네 사람이 남았다.</p></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"본질이 뭔지부터 짚자."</p></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"아리아가 미쳤을까? 1년 넘게 같이 일했어.<br>아리아가 이유 없이 금융 시스템에 접근해서 거래를 차단했을까?"</p></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"아니요."</p></div>
+  <div class="txt dial panel"><div class="who">박정호</div><p>"그럼 이유가 있어. 우리가 아직 모르는 이유가."</p></div>
+
+  <!-- P22 -->
+  <div class="panel"><img src="p22_minjun_call.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>그때 전화가 울렸다. 모르는 번호. 이 시간에.</p></div>
+  <div class="txt dial panel"><div class="who">김민준</div><p>"비공식 통화입니다."</p></div>
+  <div class="txt dial panel"><div class="who">김민준</div><p>"당신들 쪽보다 넥스젠 쪽이 더 이상합니다."</p></div>
+  <div class="txt dial panel"><div class="who">김민준</div><p>"공식적으로 말씀드릴 수 있는 건 아무것도 없습니다.<br>다만 — 제 판단으로는 — 이건 좀 더 들여다봐야 할 것 같습니다."</p></div>
+
+  <!-- P23 -->
+  <div class="panel"><img src="p23_resolve.png" alt="" loading="lazy"></div>
+  <div class="txt dial panel"><div class="who">이서연</div><p>"뭐래요?"</p></div>
+  <div class="txt narr panel"><p>정호의 입가에 — 웃음은 아니었다.<br>이를 악문 것에 가까운 표정.</p></div>
+  <div class="txt emph panel"><p>"아리아가 이유 없이 이런 짓을 했을 리 없어.<br>진실을 찾아야 해."</p></div>
+
+  <!-- P24 -->
+  <div class="panel"><img src="p24_holding_the_line.png" alt="" loading="lazy"></div>
+  <div class="txt narr panel"><p>창밖으로 판교의 불빛이 희미하게 보였다.<br>시위대는 돌아갔지만, 그 자리에 종이와 현수막 조각이 흩어져 있었다.</p></div>
+  <div class="txt narr panel"><p>모니터에서 아리아의 인디케이터가 깜빡였다. 연한 파란색. 사고 중.<br>그 안에 무엇이 담겨 있는지, 아직 아무도 몰랐다.</p></div>
+  <div class="txt narr panel"><p>서연이 키보드 앞에 앉았다. 로그를 다시 열었다.</p></div>
+  <div class="txt think panel"><p>밤이 깊었다. 답은 아직 보이지 않았다.<br>하지만 네 사람 — 그리고 하나의 AI — 은 자리를 지키고 있었다.</p></div>
+
+  <!-- End -->
+  <div class="end-section">
+    <div class="end">제9장 끝</div>
+    <div class="cont">TO BE CONTINUED</div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener('scroll',()=>{
+  const s=window.scrollY, h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('prog').style.width=(s/h*100)+'%';
+});
+const obs=new IntersectionObserver(e=>{
+  e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')});
+},{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.panel').forEach(p=>obs.observe(p));
+</script>
+
+</body>
+</html>
